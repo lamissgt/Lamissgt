@@ -3,7 +3,12 @@
 <head>
 <title>Bingo</title>
 
+<!-- LIBRERÍAS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- FUENTE CALIGRAFÍA -->
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
 <style>
 
@@ -14,59 +19,52 @@ text-align:center;
 
 .carton{
 display:grid;
-grid-template-columns: repeat(3,200px);
-gap:10px;
+grid-template-columns: repeat(3,220px);
+gap:15px;
 margin:20px auto;
-border:4px solid purple;
-padding:20px 20px 80px 20px;
+border:5px solid purple;
+padding:20px;
+padding-bottom:40px;
 width:max-content;
-position:relative;
 background:white;
+position:relative;
 }
 
+/* 🔥 TÍTULO MÁS GRANDE */
 .titulo{
 grid-column: span 3;
-height:100px;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-.titulo img{
-max-width:100%;
-max-height:100%;
+font-size:50px;
+color:purple;
+font-weight:bold;
+margin-bottom:15px;
+letter-spacing:3px;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
 
 .cuadro{
 width:200px;
-aspect-ratio:1/1;
+height:200px;
 border:2px solid black;
+display:flex;
+align-items:center;
+justify-content:center;
 overflow:hidden;
 }
 
 .cuadro img{
 width:100%;
 height:100%;
-object-fit:contain;
-background:white;
+object-fit:cover;
 }
 
-.nombre{
+/* ✨ FIRMA */
+.firma{
 position:absolute;
-bottom:10px;
+bottom:5px;
 left:10px;
-font-style:italic;
+font-family: 'Pacifico', cursive;
+font-size:18px;
 color:purple;
-}
-
-.logo{
-position:absolute;
-bottom:10px;
-right:10px;
-}
-
-.logo img{
-width:60px;
 }
 
 </style>
@@ -75,116 +73,119 @@ width:60px;
 
 <body>
 
-<h2>Generador de Bingo</h2>
+<h1>Generador de Bingo</h1>
 
 <input type="file" id="imagenes" multiple>
 <br><br>
 
-<button onclick="crear()">Generar</button>
-<button onclick="pdf()">Descargar PDF</button>
+<button onclick="crearMuchos()">Generate Bingos</button>
+<button onclick="descargarPDF()">Download PDF</button>
 
 <div id="area"></div>
 
 <script>
 
-// convertir a base64
-function base64(file){
-return new Promise(r=>{
-let reader=new FileReader()
-reader.readAsDataURL(file)
-reader.onload=()=>r(reader.result)
-})
-}
+function crearMuchos(){
 
-// crear cartones
-async function crear(){
+let input = document.getElementById("imagenes")
+let archivos = Array.from(input.files)
 
-let input=document.getElementById("imagenes")
-let files=Array.from(input.files)
+let area = document.getElementById("area")
+area.innerHTML = ""
 
-let area=document.getElementById("area")
-area.innerHTML=""
+let cantidad = 10
 
-let imgs=[]
+for(let j=0; j<cantidad; j++){
 
-for(let f of files){
-imgs.push(await base64(f))
-}
-
-for(let j=0;j<5;j++){
-
-let c=document.createElement("div")
-c.className="carton"
+let carton = document.createElement("div")
+carton.className = "carton"
 
 // título
-let t=document.createElement("div")
-t.className="titulo"
-t.innerHTML='<img src="titulo.png" onerror="this.style.display=\'none\'">'
-c.appendChild(t)
+let titulo = document.createElement("div")
+titulo.className = "titulo"
+titulo.innerText = "BINGO"
+carton.appendChild(titulo)
 
-// mezclar
-let copia=[...imgs].sort(()=>Math.random()-0.5)
+// mezclar imágenes
+let copia = [...archivos]
+copia.sort(()=>Math.random()-0.5)
 
-// cuadros
+// crear 9 cuadros
 for(let i=0;i<9;i++){
-let d=document.createElement("div")
-d.className="cuadro"
 
-let im=document.createElement("img")
-if(copia[i]) im.src=copia[i]
+let cuadro = document.createElement("div")
+cuadro.className = "cuadro"
 
-d.appendChild(im)
-c.appendChild(d)
+let img = document.createElement("img")
+
+if(copia[i]){
+let reader = new FileReader()
+reader.onload = function(e){
+img.src = e.target.result
+}
+reader.readAsDataURL(copia[i])
 }
 
-// nombre
-let n=document.createElement("div")
-n.className="nombre"
-n.innerText="La Miss GT"
-c.appendChild(n)
-
-// logo
-let l=document.createElement("div")
-l.className="logo"
-l.innerHTML='<img src="logo.png" onerror="this.style.display=\'none\'">'
-c.appendChild(l)
-
-area.appendChild(c)
+cuadro.appendChild(img)
+carton.appendChild(cuadro)
 
 }
 
+// ✨ FIRMA
+let firma = document.createElement("div")
+firma.className = "firma"
+firma.innerText = "La Miss GT"
+carton.appendChild(firma)
+
+area.appendChild(carton)
+
 }
 
-// 🔥 PDF REAL FUNCIONANDO
-async function pdf(){
+}
+
+async function descargarPDF(){
 
 const { jsPDF } = window.jspdf
+let doc = new jsPDF("p","mm","a4")
 
 let cartones = document.querySelectorAll(".carton")
 
-if(cartones.length == 0){
-alert("Primero genera")
+if(cartones.length === 0){
+alert("Primero genera los bingos")
 return
 }
 
-let doc = new jsPDF("p","mm","a4")
+// esperar imágenes
+let imagenes = document.querySelectorAll("img")
 
-for(let i = 0; i < cartones.length; i++){
+await Promise.all(Array.from(imagenes).map(img => {
+return new Promise(resolve => {
+if (img.complete) {
+resolve()
+} else {
+img.onload = resolve
+img.onerror = resolve
+}
+})
+}))
 
-await doc.html(cartones[i],{
-x:10,
-y:10,
-width:190,
-windowWidth:800
+// generar PDF
+for(let i=0; i<cartones.length; i++){
+
+let canvas = await html2canvas(cartones[i], {
+scale: 2
 })
 
-if(i < cartones.length - 1){
+let imgData = canvas.toDataURL("image/png")
+
+doc.addImage(imgData, 'PNG', 10, 10, 190, 270)
+
+if(i !== cartones.length - 1){
 doc.addPage()
 }
 
 }
 
-// 🔥 descarga directa REAL
 doc.save("bingo.pdf")
 
 }
