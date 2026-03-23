@@ -10,9 +10,57 @@
 
 <style>
 
+/* 🌈 FONDO GENERAL */
 body{
-font-family: Arial;
+font-family: Arial, sans-serif;
 text-align:center;
+margin:0;
+background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+min-height:100vh;
+}
+
+/* 📦 CONTENEDOR APP */
+.contenedor{
+max-width:1200px;
+margin:20px auto;
+background:white;
+padding:20px;
+border-radius:20px;
+box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* 🎓 TITULO */
+h1{
+font-size:40px;
+color:#6a1b9a;
+margin-bottom:15px;
+text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+/* 🔘 BOTONES */
+button{
+background: linear-gradient(135deg, #7b1fa2, #ab47bc);
+color:white;
+border:none;
+padding:12px 20px;
+margin:5px;
+font-size:16px;
+border-radius:10px;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform: scale(1.05);
+box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* 📂 INPUT */
+input{
+padding:10px;
+border-radius:10px;
+border:1px solid #ccc;
+background:#fafafa;
 }
 
 /* CARTONES */
@@ -27,6 +75,13 @@ padding-bottom:40px;
 width:max-content;
 background:white;
 position:relative;
+border-radius:15px;
+box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+transition:0.3s;
+}
+
+.carton:hover{
+transform: scale(1.02);
 }
 
 .titulo{
@@ -42,11 +97,12 @@ text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 .cuadro{
 width:200px;
 height:200px;
-border:2px solid black;
+border:2px solid #6a1b9a;
 display:flex;
 align-items:center;
 justify-content:center;
 overflow:hidden;
+border-radius:10px;
 }
 
 .cuadro img{
@@ -64,23 +120,28 @@ font-size:18px;
 color:purple;
 }
 
-/* TARJETAS CANTADOR */
+/* 🔥 TARJETAS MEJORADAS */
 .tarjetas{
 display:grid;
-grid-template-columns: repeat(5,150px);
+grid-template-columns: repeat(6, 1fr);
 gap:10px;
 justify-content:center;
 margin-top:30px;
+max-width:900px;
+margin-left:auto;
+margin-right:auto;
 }
 
 .tarjeta{
-width:130px;
-height:130px;
-border:2px solid black;
+width:100%;
+aspect-ratio:1/1;
+border:2px solid #6a1b9a;
 display:flex;
 align-items:center;
 justify-content:center;
 overflow:hidden;
+border-radius:10px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
 .tarjeta img{
@@ -95,7 +156,9 @@ object-fit:cover;
 
 <body>
 
-<h1>Generador de Bingo</h1>
+<div class="contenedor">
+
+<h1>🎉 Bingo Educativo Interactivo 🎉</h1>
 
 <input type="file" id="imagenes" multiple>
 <br><br>
@@ -104,6 +167,8 @@ object-fit:cover;
 <button onclick="descargarPDF()">Descargar PDF</button>
 
 <div id="area"></div>
+
+</div>
 
 <script>
 
